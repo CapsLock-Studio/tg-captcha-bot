@@ -153,6 +153,9 @@ func passChallenge(c *tb.Callback) {
 		bot.Edit(c.Message, config.AfterFailAnswerMessage)
 		bot.Ban(c.Message.Chat, &chatMember)
 
+		time.AfterFunc(10*time.Second, func() {
+			bot.Delete(c.Message)
+		})
 		return
 	}
 
