@@ -18,46 +18,20 @@ This bot has been tested on several large supergroups (1000+ people) for a long 
 2. Install [Docker](https://docs.docker.com/install)
 3. Install [Docker Compose](https://docs.docker.com/compose/install)
 
-## Instructions 
+## Instructions
 0. Clone the repo
 ```
 git clone https://github.com/mxssl/tg-captcha-bot.git
 cd tg-captcha-bot
 ```
 
-1. Add a token from BotFather to env variable in docker-compose.yml
-```
-version: '3'
-
-services:
-  tg-captcha-bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: tg-captcha-bot:latest
-    volumes:
-      - ./config.toml:/config.toml
-    environment:
-      - TGTOKEN="your_token"
+1. Build docker image and run
+```bash
+docker build . -t tg-bot
+docker run -idt -e TGTOKEN={TGTOKEN} tg-bot
 ```
 
-2. Build a Docker container
-```
-docker-compose build
-```
-
-3. Run the container
-```
-docker-compose up -d
-```
-
-4. Check that the bot started correctly
-```
-docker-compose ps
-docker-compose logs
-```
-
-5. Add the bot to your supergroup and give it administrator privileges
+2. Add the bot to your supergroup and give it administrator privileges
 
 ## Сustomization
 You can change several bot's settings through the configuration file `config.toml`

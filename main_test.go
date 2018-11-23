@@ -14,9 +14,9 @@ func TestReadConfig(t *testing.T) {
 
 func TestCorrectToken(t *testing.T) {
 	token := "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
-	os.Setenv("TEST_TOKEN", token)
+	os.Setenv("TGTOKEN", token)
 
-	v, err := getToken("TEST_TOKEN")
+	v, err := getToken()
 	if err != nil {
 		t.Errorf("Incorrect token. Error: %v", err)
 	}
@@ -28,9 +28,9 @@ func TestCorrectToken(t *testing.T) {
 
 func TestIncorrectToken(t *testing.T) {
 	token := "a123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
-	os.Setenv("TEST_TOKEN", token)
+	os.Setenv("TGTOKEN", token)
 
-	v, _ := getToken("TEST_TOKEN")
+	v, _ := getToken()
 
 	if v != "" {
 		t.Errorf(`Case failed. Expected "", Have: %v`, v)

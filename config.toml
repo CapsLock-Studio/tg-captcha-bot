@@ -1,8 +1,5 @@
 # Config file for Telegram Captcha Bot
 
-# Button text
-button_text = "I'm not a robot!"
-
 # Bot sends this message to new users
 welcome_message = "Hello! This is spam protection system. Please press the button in 30 seconds or you will be banned!"
 
@@ -12,5 +9,8 @@ after_success_message = "User passed the validation."
 # Edit welcome message with this text if user failed validation
 after_fail_message = "User didn't pass the validation and banned."
 
-# Show success and failure messages or delete them. Pick "show" or "del"
+# Edit welcome message with this text if user failed math validation
+after_fail_answer_message = "User didn't pass the validation and banned."
+
+# Show success and failure messages or delete them. Pick "show" or "delete"
 print_success_and_fail_messages_strategy = "show"
