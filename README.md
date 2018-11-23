@@ -16,7 +16,6 @@ This bot has been tested on several large supergroups (1000+ people) for a long 
 0. Obtain bot token from [@BotFather](https://t.me/BotFather)
 1. The main method to run this bot is Docker container
 2. Install [Docker](https://docs.docker.com/install)
-3. Install [Docker Compose](https://docs.docker.com/compose/install)
 
 ## Instructions
 0. Clone the repo
