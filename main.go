@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"regexp"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -89,9 +90,9 @@ func challengeUser(m *tb.Message) {
 	for index := 0; index < 3; index++ {
 		text := ""
 		if index == answer {
-			text = string(questions[0] + questions[1])
+			text = strconv.Itoa(questions[0] + questions[1])
 		} else {
-			text = string(rand.Intn(99) + rand.Intn(99))
+			text = strconv.Itoa(rand.Intn(99) + rand.Intn(99))
 		}
 
 		data := func(a int, b int) string {
@@ -112,7 +113,7 @@ func challengeUser(m *tb.Message) {
 
 	welcomeMessage := config.WelcomeMessage
 	welcomeMessage = strings.Replace(welcomeMessage, "{user}", m.UserJoined.FirstName+" "+m.UserJoined.LastName, -1)
-	welcomeMessage = strings.Replace(welcomeMessage, "{formula}", string(questions[0])+"+"+string(questions[1]), -1)
+	welcomeMessage = strings.Replace(welcomeMessage, "{formula}", strconv.Itoa(questions[0])+"+"+strconv.Itoa(questions[1]), -1)
 
 	challengeMsg, _ := bot.Reply(m, welcomeMessage, &tb.ReplyMarkup{InlineKeyboard: inlineKeys})
 
@@ -125,7 +126,7 @@ func challengeUser(m *tb.Message) {
 			if config.PrintSuccessAndFail == "show" {
 				bot.Edit(challengeMsg, config.AfterFailMessage)
 
-				time.AfterFunc(10*time.Second, func() {
+				time.AfterFunc(30*time.Second, func() {
 					bot.Delete(m)
 					bot.Delete(challengeMsg)
 				})
@@ -153,7 +154,7 @@ func passChallenge(c *tb.Callback) {
 		bot.Edit(c.Message, config.AfterFailAnswerMessage)
 		bot.Ban(c.Message.Chat, &chatMember)
 
-		time.AfterFunc(10*time.Second, func() {
+		time.AfterFunc(30*time.Second, func() {
 			bot.Delete(c.Message)
 		})
 		return
