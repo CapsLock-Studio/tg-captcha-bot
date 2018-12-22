@@ -176,8 +176,7 @@ func passChallenge(c *tb.Callback) {
 		return
 	}
 
-	delete(passedUsers, c.Sender.ID)
-	delete(passedDialog, c.Sender.ID)
+	passedUsers[c.Sender.ID] = struct{}{}
 
 	if config.PrintSuccessAndFail == "show" {
 		bot.Edit(c.Message, config.AfterSuccessMessage)
