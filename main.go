@@ -13,6 +13,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"golang.org/x/text/width"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
 
@@ -27,7 +28,18 @@ type Config struct {
 
 var config Config
 var passedUsers = make(map[int]struct{})
+var passedDialog = make(map[int]string)
 var bot *tb.Bot
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func randStringBytes(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
+}
 
 func init() {
 	err := readConfig()
@@ -83,10 +95,12 @@ func challengeUser(m *tb.Message) {
 	newChatMember := tb.ChatMember{User: m.UserJoined, RestrictedUntil: tb.Forever(), Rights: tb.Rights{CanSendMessages: false}}
 	bot.Restrict(m.Chat, &newChatMember)
 
+	rand.Seed(time.Now().Unix())
 	questions := []int{rand.Intn(99), rand.Intn(99)}
 	log.Printf("%v", questions)
 	inlineKeys := [][]tb.InlineButton{}
 	answer := rand.Intn(3)
+	hashString := randStringBytes(10)
 	for index := 0; index < 3; index++ {
 		text := ""
 		if index == answer {
@@ -97,23 +111,24 @@ func challengeUser(m *tb.Message) {
 
 		data := func(a int, b int) string {
 			if a == b {
-				return "Yes"
+				return "true," + hashString
 			}
 
-			return "No"
+			return "false," + hashString
 		}
 
 		inlineBtn := tb.InlineButton{
 			Data: data(index, answer),
-			Text: text,
+			Text: replaceFormula(text),
 		}
 
 		inlineKeys = append(inlineKeys, []tb.InlineButton{inlineBtn})
 	}
 
+	passedDialog[m.UserJoined.ID] = hashString
 	welcomeMessage := config.WelcomeMessage
 	welcomeMessage = strings.Replace(welcomeMessage, "{user}", m.UserJoined.FirstName+" "+m.UserJoined.LastName, -1)
-	welcomeMessage = strings.Replace(welcomeMessage, "{formula}", strconv.Itoa(questions[0])+"+"+strconv.Itoa(questions[1]), -1)
+	welcomeMessage = strings.Replace(welcomeMessage, "{formula}", replaceFormula(strconv.Itoa(questions[0])+"+"+strconv.Itoa(questions[1])), -1)
 
 	challengeMsg, _ := bot.Reply(m, welcomeMessage, &tb.ReplyMarkup{InlineKeyboard: inlineKeys})
 
@@ -139,6 +154,7 @@ func challengeUser(m *tb.Message) {
 		}
 
 		delete(passedUsers, m.UserJoined.ID)
+		delete(passedDialog, m.UserJoined.ID)
 	})
 }
 
@@ -149,7 +165,8 @@ func passChallenge(c *tb.Callback) {
 		return
 	}
 
-	if c.Data == "No" {
+	data := strings.Split(c.Data, ",")
+	if data[0] == "false" && data[1] == passedDialog[c.Sender.ID] {
 		chatMember := tb.ChatMember{User: c.Message.ReplyTo.Sender, RestrictedUntil: tb.Forever()}
 		bot.Edit(c.Message, config.AfterFailAnswerMessage)
 		bot.Ban(c.Message.Chat, &chatMember)
@@ -160,7 +177,8 @@ func passChallenge(c *tb.Callback) {
 		return
 	}
 
-	passedUsers[c.Sender.ID] = struct{}{}
+	delete(passedUsers, c.Sender.ID)
+	delete(passedDialog, c.Sender.ID)
 
 	if config.PrintSuccessAndFail == "show" {
 		bot.Edit(c.Message, config.AfterSuccessMessage)
@@ -186,6 +204,18 @@ func readConfig() (err error) {
 		return err
 	}
 	return
+}
+
+func replaceFormula(str string) string {
+	randString := func(strs []string) string {
+		rand.Seed(time.Now().Unix())
+		return strs[rand.Intn(len(strs))]
+	}
+
+	str = strings.Replace(str, "0", randString([]string{"O", "o"}), -1)
+	str = strings.Replace(str, "1", randString([]string{"I", "l"}), -1)
+
+	return width.Widen.String(str)
 }
 
 func getToken() (string, error) {

@@ -112,7 +112,7 @@
   revision = "90868a75fefd03942536221d7c0e2f84ec62a668"
 
 [[projects]]
-  digest = "1:8029e9743749d4be5bc9f7d42ea1659471767860f0cdc34d37c3111bd308a295"
+  digest = "1:5a8c9713f32ff4b05072d1eb87b1b2c3feacb061c1300519cbe12c946a853500"
   name = "golang.org/x/text"
   packages = [
     "internal/gen",
@@ -121,6 +121,7 @@
     "transform",
     "unicode/cldr",
     "unicode/norm",
+    "width",
   ]
   pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
@@ -148,6 +149,7 @@
   input-imports = [
     "github.com/pkg/errors",
     "github.com/spf13/viper",
+    "golang.org/x/text/width",
     "gopkg.in/tucnak/telebot.v2",
   ]
   solver-name = "gps-cdcl"
