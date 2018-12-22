@@ -111,10 +111,10 @@ func challengeUser(m *tb.Message) {
 
 		data := func(a int, b int) string {
 			if a == b {
-				return "true," + hashString
+				return hashString
 			}
 
-			return "false," + hashString
+			return randStringBytes(10)
 		}
 
 		inlineBtn := tb.InlineButton{
@@ -165,8 +165,7 @@ func passChallenge(c *tb.Callback) {
 		return
 	}
 
-	data := strings.Split(c.Data, ",")
-	if data[0] == "false" && data[1] == passedDialog[c.Sender.ID] {
+	if c.Data != passedDialog[c.Sender.ID] {
 		chatMember := tb.ChatMember{User: c.Message.ReplyTo.Sender, RestrictedUntil: tb.Forever()}
 		bot.Edit(c.Message, config.AfterFailAnswerMessage)
 		bot.Ban(c.Message.Chat, &chatMember)
