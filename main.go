@@ -65,6 +65,7 @@ func main() {
 	}
 
 	bot.Handle(tb.OnUserJoined, challengeUser)
+	bot.Handle(tb.OnCallback, passChallenge)
 
 	bot.Handle("/healthz", func(m *tb.Message) {
 		msg := "I'm OK"
@@ -120,8 +121,6 @@ func challengeUser(m *tb.Message) {
 			Data: data(index, answer),
 			Text: replaceFormula(text),
 		}
-
-		bot.Handle(&inlineBtn, passChallenge)
 
 		inlineKeys = append(inlineKeys, []tb.InlineButton{inlineBtn})
 	}
