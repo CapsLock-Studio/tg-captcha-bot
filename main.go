@@ -132,7 +132,7 @@ func challengeUser(m *tb.Message) {
 
 	challengeMsg, _ := bot.Reply(m, welcomeMessage, &tb.ReplyMarkup{InlineKeyboard: inlineKeys})
 
-	time.AfterFunc(180*time.Second, func() {
+	time.AfterFunc(30*time.Second, func() {
 		_, passed := passedUsers[m.UserJoined.ID]
 		if !passed {
 			chatMember := tb.ChatMember{User: m.UserJoined, RestrictedUntil: tb.Forever()}
@@ -141,7 +141,7 @@ func challengeUser(m *tb.Message) {
 			if config.PrintSuccessAndFail == "show" {
 				bot.Edit(challengeMsg, config.AfterFailMessage)
 
-				time.AfterFunc(30*time.Second, func() {
+				time.AfterFunc(10*time.Second, func() {
 					bot.Delete(m)
 					bot.Delete(challengeMsg)
 				})
@@ -170,7 +170,7 @@ func passChallenge(c *tb.Callback) {
 		bot.Edit(c.Message, config.AfterFailAnswerMessage)
 		bot.Ban(c.Message.Chat, &chatMember)
 
-		time.AfterFunc(30*time.Second, func() {
+		time.AfterFunc(10*time.Second, func() {
 			bot.Delete(c.Message)
 		})
 		return
