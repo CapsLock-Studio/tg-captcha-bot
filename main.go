@@ -106,7 +106,14 @@ func challengeUser(m *tb.Message) {
 		if index == answer {
 			text = strconv.Itoa(questions[0] + questions[1])
 		} else {
-			text = strconv.Itoa(rand.Intn(99) + rand.Intn(99))
+			for {
+				wrongAnswer := rand.Intn(99) + rand.Intn(99)
+				text = strconv.Itoa(wrongAnswer)
+
+				if wrongAnswer == (questions[0] + questions[1]) {
+					break
+				}
+			}
 		}
 
 		data := func(a int, b int) string {
