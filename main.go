@@ -110,7 +110,7 @@ func challengeUser(m *tb.Message) {
 				wrongAnswer := rand.Intn(99) + rand.Intn(99)
 				text = strconv.Itoa(wrongAnswer)
 
-				if wrongAnswer == (questions[0] + questions[1]) {
+				if wrongAnswer != (questions[0] + questions[1]) {
 					break
 				}
 			}
