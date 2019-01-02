@@ -101,6 +101,7 @@ func challengeUser(m *tb.Message) {
 	inlineKeys := [][]tb.InlineButton{}
 	answer := rand.Intn(3)
 	hashString := randStringBytes(10)
+	answerMap := make(map[string]bool)
 	for index := 0; index < 3; index++ {
 		text := ""
 		if index == answer {
@@ -109,12 +110,15 @@ func challengeUser(m *tb.Message) {
 			for {
 				wrongAnswer := rand.Intn(99) + rand.Intn(99)
 				text = strconv.Itoa(wrongAnswer)
+				ok := answerMap[text]
 
-				if wrongAnswer != (questions[0] + questions[1]) {
+				if wrongAnswer != (questions[0]+questions[1]) && !ok {
 					break
 				}
 			}
 		}
+
+		answerMap[text] = true
 
 		data := func(a int, b int) string {
 			if a == b {
