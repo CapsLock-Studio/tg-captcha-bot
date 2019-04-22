@@ -149,16 +149,18 @@ func challengeUser(m *tb.Message) {
 			chatMember := tb.ChatMember{User: m.UserJoined, RestrictedUntil: tb.Forever()}
 			bot.Ban(m.Chat, &chatMember)
 
-			if config.PrintSuccessAndFail == "show" {
-				bot.Edit(challengeMsg, config.AfterFailMessage)
+			if challengeMsg != nil {
+				if config.PrintSuccessAndFail == "show" {
+					bot.Edit(challengeMsg, config.AfterFailMessage)
 
-				time.AfterFunc(10*time.Second, func() {
+					time.AfterFunc(10*time.Second, func() {
+						bot.Delete(m)
+						bot.Delete(challengeMsg)
+					})
+				} else if config.PrintSuccessAndFail == "delete" {
 					bot.Delete(m)
 					bot.Delete(challengeMsg)
-				})
-			} else if config.PrintSuccessAndFail == "delete" {
-				bot.Delete(m)
-				bot.Delete(challengeMsg)
+				}
 			}
 
 			log.Printf("User: %v was banned in chat: %v", m.UserJoined, m.Chat)
